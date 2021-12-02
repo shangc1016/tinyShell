@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"strings"
+	"bufio"
+	"os"
 
-	"log"
+	// "log"
 
 	"github.com/spf13/cobra"
 )
@@ -51,16 +53,21 @@ var (
 func main() {
 
 	// rootCmd.Execute()
-	var shellArgs string
-	n, err := fmt.Scan(&shellArgs)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(n)
-	args := strings.Fields(shellArgs)
-	// fmt.Println(shellArgs)
-	fmt.Println(args[0])
+	// var shellArgs string
+	// fmt.Scan(&shellArgs)
+	// fmt.Printf("%s\n", shellArgs)
 
+	inputReader := bufio.NewReader(os.Stdin)
+
+	fmt.Println("please input")
+	input, err := inputReader.ReadString('\n')
+	if err != nil{
+		exit(0)
+	}
+	fmt.Println(input)
+
+
+	
 	// for {
 	// 	fmt.Scan(&shellArgs)
 	// 	// fmt.Println(shellArgs)
