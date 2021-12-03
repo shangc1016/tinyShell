@@ -5,8 +5,10 @@ import (
 	"strings"
 	"bufio"
 	"os"
+	"os/exec"
+	"syscall"
 
-	// "log"
+	"log"
 
 	"github.com/spf13/cobra"
 )
@@ -52,31 +54,40 @@ var (
 
 func main() {
 
-	// rootCmd.Execute()
-	// var shellArgs string
-	// fmt.Scan(&shellArgs)
-	// fmt.Printf("%s\n", shellArgs)
+	for {
+		userName := os.Getenv("USER")
+		hostName, err := os.Hostname()
+		if err != nil{
+			hostName = "NIL"
+		}
+		pwd, err := os.Getwd()
+		if err != nil{
+			pwd = "NIL"
+		}
+		fmt.Printf("%s:%s:%s$",userName, hostName, pwd)
 
-	inputReader := bufio.NewReader(os.Stdin)
+		inputReader := bufio.NewReader(os.Stdin)
+		input, err := inputReader.ReadString('\n')
+		if err != nil{
+			log.Println(err.Error())
+		}
+		shellArgs := strings.Fields(input)
 
-	fmt.Println("please input")
-	input, err := inputReader.ReadString('\n')
-	if err != nil{
-		exit(0)
+		if shellArgs[0] == "quit" || shellArgs[0] == "q" {
+			break
+		}
+
+		commandPath, err := exec.LookPath(shellArgs[0])
+		env := os.Environ()
+		if err != nil{
+			log.Println(err.Error())
+		}
+		
+		pid, _, _ := syscall.Syscall(57, 0, 0, 0)
+		if pid == 0 {
+			syscall.Exec(commandPath, shellArgs, env)
+		} else{
+			syscall.Syscall(61, 0, 0, 0)
+		}
 	}
-	fmt.Println(input)
-
-
-	
-	// for {
-	// 	fmt.Scan(&shellArgs)
-	// 	// fmt.Println(shellArgs)
-
-	// 	// args := strings.Fields(shellArgs)
-	// 	// fmt.Println(args)
-	// 	args := strings.Fields(shellArgs)
-	// 	// fmt.Println(args)
-	// 	fmt.Println("====args[0]:", args[0])
-
-	// }
 }
